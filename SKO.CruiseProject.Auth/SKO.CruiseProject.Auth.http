@@ -1,0 +1,6 @@
+@SKO.CruiseProject.Auth_HostAddress = http://localhost:5269
+
+GET {{SKO.CruiseProject.Auth_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

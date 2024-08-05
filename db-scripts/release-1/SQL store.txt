@@ -1,0 +1,1150 @@
+
+-- ------------SQL SCRIPTS-------------------
+
+
+-- -----<><><><><><><><><><><><><><><<><-------Table names and columns-----------><><><><><><<><><><><><><><><>-------------
+
+ -- =============guest_crew_info================
+
+PERSON_ID (VARCHAR(45))
+TITLE (ENUM)
+FIRST_NAME (VARCHAR(45))
+LAST_NAME (VARCHAR(45))
+DOB (DATE)
+GENDER (ENUM('M', 'F', 'T'))
+NATIONALITY (VARCHAR(45))
+IS_ONBOARD (ENUM('YES', 'NO'))
+CABIN_NO (INT)
+IS_CHECKED_IN (ENUM('YES', 'NO'))
+CHECKEDIN_TERMINAL (ENUM)
+GUEST_OR_CREW (ENUM)
+PROFILE_IMAGE (MEDIUMTEXT)
+
+-- ============= guest_info  =================
+
+PERSON_ID (VARCHAR(45))
+IS_ACTIVE (VARCHAR(45))
+RESERVATION_NUMBER (VARCHAR(45))
+SEQUENCE_NO (INT)
+EMBARK_DATE (DATE)
+DEBARK_DATE (DATE)
+VOYAGE_NUMBER (VARCHAR(45))
+
+-- =============crew_info =============
+
+PERSON_ID (VARCHAR(45))
+SAFETY_NO (INT)
+SIGN_ON_DATE (DATE)
+SIGN_OFF_DATE (DATE)
+DEPT_ID (INT)
+POSITION_ID (INT)
+SHIP_ID (VARCHAR(5))
+
+
+-- ============= position_info =============
+
+POSITION_ID (INT)
+POSITION (VARCHAR(45))
+DEPARTMENT_ID (INT)
+
+-- ============= department_info =============
+
+DEPT_ID (INT)
+DEPARTMENT (VARCHAR(45))
+
+
+-- ============= voyage_info =============
+
+VOYAGE_NUMBER (VARCHAR(45))
+SHIP_ID (VARCHAR(45))
+VOYAGE_START_DATE (DATE)
+VOYAGE_END_DATE (DATE)
+IS_VOYAGE_ACTIVE (VARCHAR(5))
+PORT_NAME (VARCHAR(20))
+
+-- ============= ship_info =============
+
+SHIP_ID (VARCHAR(45))
+SHIP_NAME (VARCHAR(45))
+
+-- ============= ship_department_connection =============
+
+ID (INT)
+DEPT_ID (INT)
+SHIP_ID (VARCHAR(45))
+
+
+
+
+-- --------<><><><><><><><><><><><><><><<><-------Table Creation Queries-----------><><><><><><<><><><><><><><><>-------------
+
+
+-- ============[1]============guest_crew_info==========================
+
+CREATE TABLE `sko_trainee`.`guest_crew_info` (
+  `PERSON_ID` VARCHAR(45) NOT NULL,
+  `TITLE` ENUM('MS','MR','MRS') NOT NULL,
+  `FIRST_NAME` VARCHAR(45) NOT NULL,
+  `last_name` VARCHAR(45) NOT NULL,  -- change it to uppercase later
+  `DOB` DATE NOT NULL,
+  `GENDER` ENUM('M','F','T') NOT NULL,
+  `NATIONALITY` VARCHAR(45) NOT NULL,
+  `IS_ONBOARD` ENUM('YES','NO') NOT NULL,
+  `CABIN_NO` INT NOT NULL,
+  `IS_CHECKED_IN` ENUM('YES','NO') NOT NULL,
+  `CHECKEDIN_TERMINAL` ENUM('A','B','C','D') NOT NULL,
+  `GUEST_OR_CREW` ENUM('GUEST','CREW') NOT NULL,
+  `PROFILE_IMAGE` MEDIUMTEXT,
+  PRIMARY KEY (`PERSON_ID`));
+
+-- ===========[2]=========department_info==========================
+
+CREATE TABLE `sko_trainee`.`department_info` (
+  `DEPT_ID` INT NOT NULL,
+  `DEPARTMENT` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`DEPT_ID`));
+
+
+-- ============[3]============position_info==========================
+
+CREATE TABLE `sko_trainee`.`position_info` (
+  `POSITION_ID` INT NOT NULL,
+  `POSITION` VARCHAR(45) NOT NULL,
+  `DEPARTMENT_ID` INT NOT NULL,
+  PRIMARY KEY (`POSITION_ID`),
+  INDEX `DEPARTMENT_ID_idx` (`DEPARTMENT_ID` ASC) VISIBLE,
+  CONSTRAINT `DEPARTMENT_ID`
+    FOREIGN KEY (`DEPARTMENT_ID`)
+    REFERENCES `sko_trainee`.`department_info` (`DEPT_ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
+-- ============[4]============ ship_info ==========================
+
+  CREATE TABLE `sko_trainee`.`ship_info` (
+  `SHIP_ID` VARCHAR(45) PRIMARY KEY NOT NULL,
+  `SHIP_NAME` VARCHAR(45) NOT NULL,
+  
+
+-- ============[5]============ voyage_info ==========================
+
+CREATE TABLE `sko_trainee`.`voyage_info` (
+  `VOYAGE_NUMBER` VARCHAR(45) PRIMARY KEY NOT NULL,
+  `SHIP_ID` VARCHAR(45) NULL,
+  `voyage_start_date` DATE,
+  `voyage_end_date` DATE,
+  `is_voyage_active` VARCHAR(5),
+  `port_name` VARCHAR(20),
+  INDEX `SHIP_ID_idx` (`SHIP_ID` ASC) VISIBLE,
+  CONSTRAINT `SHIP_ID` FOREIGN KEY (`SHIP_ID`) REFERENCES `sko_trainee`.`ship_info` (`SHIP_ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
+
+-- ===========[6]=============guest_info==========================
+
+CREATE TABLE `sko_trainee`.`guest_info` (
+  `PERSON_ID` VARCHAR(45) PRIMARY KEY NOT NULL,
+  `IS_ACTIVE` VARCHAR(45) NOT NULL,
+  `RESERVATION_NUMBER` VARCHAR(45) NOT NULL,
+  `SEQUENCE_NO` INT NOT NULL,
+  `EMBARK_DATE` DATE NOT NULL ,
+  `DBARK_DATE` DATE NOT NULL,
+  `VOYAGE_NUMBER` VARCHAR(45) NOT NULL,
+  INDEX `PERSON_ID_idx` (`PERSON_ID` ASC) VISIBLE,
+  INDEX `VOYAGE_NUMBER_idx` (`VOYAGE_NUMBER` ASC) VISIBLE,
+  CONSTRAINT `PERSON_ID` FOREIGN KEY (`PERSON_ID`) REFERENCES `sko_trainee`.`guest_crew_info` (`PERSON_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `VOYAGE_NUMBER` FOREIGN KEY (`VOYAGE_NUMBER`) REFERENCES `sko_trainee`.`voyage_info` (`VOYAGE_NUMBER`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `chk_dates_guest_info` CHECK (`EMBARK_DATE` < `DBARK_DATE`));
+
+
+
+-- ==========[7]==============crew_info==========================
+
+CREATE TABLE `sko_trainee`.`crew_info` (
+  `PERSON_ID` VARCHAR(45) PRIMARY KEY NOT NULL,
+  `SAFETY_NO` INT NOT NULL,
+  `SIGN_ON_DATE` DATE NOT NULL,
+  `SIGN_OFF_DATE` DATE NOT NULL,
+  `DEPT_ID` INT NOT NULL,
+  `POSITION_ID` INT NOT NULL,
+  `SHIP_ID` VARCHAR(20),
+   INDEX `DEPT_ID_idx` (`DEPT_ID` ASC) VISIBLE,
+  INDEX `POSITION_ID_idx` (`POSITION_ID` ASC) VISIBLE,
+  CONSTRAINT `PERSONID` FOREIGN KEY (`PERSON_ID`) REFERENCES `sko_trainee`.`guest_crew_info` (`PERSON_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `DEPTID` FOREIGN KEY (`DEPT_ID`) REFERENCES `sko_trainee`.`department_info` (`DEPT_ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `POSITIONID` FOREIGN KEY (`POSITION_ID`) REFERENCES `sko_trainee`.`position_info` (`POSITION_ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT (`SHIP_ID`) FOREIGN KEY (SHIP_ID) REFERENCES ship_info(SHIP_ID),
+  CONSTRAINT CHK_DATE_CREW_INFO CHECK (`SIGN_ON_DATE`<`SIGN_OFF_DATE`) );
+
+
+-- ===============[8]=================ship_department_connection=============
+
+CREATE TABLE `cruisedomaindb`.`ship_department_connection` (
+  `ID` INT NOT NULL,
+  `DEPT_ID` INT NOT NULL,
+  `SHIP_ID` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`ID`),
+  INDEX `DEPTID_idx` (`DEPT_ID` ASC) VISIBLE,
+  INDEX `SHIP_ID_idx` (`SHIP_ID` ASC) VISIBLE,
+  CONSTRAINT `DEPTID1`
+    FOREIGN KEY (`DEPT_ID`)
+    REFERENCES `cruisedomaindb`.`department_info` (`DEPT_ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `SHIPID1`
+    FOREIGN KEY (`SHIP_ID`)
+    REFERENCES `cruisedomaindb`.`ship_info` (`SHIP_ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE);
+
+
+-- -------------------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------------------
+
+
+-- --------<><><><><><><><><><><><><><><<><-------Data Insertion Queries-----------><><><><><><<><><><><><><><><>-------------
+
+
+
+-- ==============[1]==============guest_crew_info======================
+
+INSERT INTO .`guest_crew_info` 
+(`PERSON_ID`, `TITLE`, `FIRST_NAME`, `last_name`, `DOB`, `GENDER`, `NATIONALITY`, `IS_ONBOARD`, `CABIN_NO`, `IS_CHECKED_IN`, `CHECKEDIN_TERMINAL`, `GUEST_OR_CREW`) 
+VALUES
+('V1F7B100001', 'Mr', 'GEORGE', 'FISH', '1986/08/09', 'M', 'US', 'NO', '10201', 'YES', 'B', 'GUEST'),
+('V1F7B100002', 'Mrs', 'JESSA', 'DANCE', '1986/09/24', 'F', 'INDIA', 'YES', '10201', 'YES', 'C', 'GUEST'),
+('V2N2B300001', 'Mrs', 'INEZ', 'WHITE', '1966/01/15', 'F', 'UK', 'NO', '10202', 'NO', 'B', 'GUEST'),
+('V2N2B300002', 'Mrs', 'TRACY', 'WILSON', '1965/05/20', 'F', 'US', 'NO', '10202', 'YES', 'A', 'GUEST'),
+('K3SZ4200001', 'Mr', 'DAVID', 'MARTIN', '1996/10/16', 'M', 'INDIA', 'YES', '10203', 'YES', 'B', 'GUEST'),
+('K3SZ4200002', 'Mrs', 'KIANAVID', 'SANTOS', '2001/08/27', 'F', 'UK', 'YES', '10203', 'YES', 'A', 'GUEST'),
+('J7BH4400001', 'Mrs', 'KATHLEEN', 'MOSER', '1972/04/06', 'F', 'CHINA', 'YES', '10204', 'YES', 'B', 'GUEST'),
+('J7BH4400002', 'Mr', 'BRETT', 'MOSER', '1972/04/06', 'M', 'CHINA', 'YES', '10204', 'YES', 'C', 'GUEST'),
+('V1G3N400001', 'Mrs', 'SURUJDAYE', 'ROSLER', '1965/09/28', 'F', 'IRAQ', 'NO', '10205', 'NO', 'B', 'GUEST'),
+('V1G3N400002', 'Mr', 'FAROOK', 'ASRALI', '1965/10/02', 'M', 'IRAQ', 'YES', '10205', 'YES', 'B', 'GUEST'),
+('482988', 'Mrs', 'RINYAMI', 'SHOKWUNGNAO', '1991-02-23', 'F', 'IND', 'Yes', 37, 'YES', 'C', 'CREW'),
+('482989', 'Mrs', 'ANNA', 'KIM', '1990-06-15', 'F', 'US', 'Yes', 38, 'YES', 'A', 'CREW'),
+('482990', 'Mr', 'JAMES', 'LEE', '1985-03-12', 'M', 'CAN', 'No', 39, 'YES', 'B', 'CREW'),
+('482991', 'Mrs', 'MARIA', 'GARCIA', '1978-11-22', 'F', 'MEX', 'Yes', 40, 'YES', 'B', 'CREW'),
+('482992', 'Mr', 'AHMED', 'KHAN', '1993-04-18', 'M', 'PAK', 'Yes', 41, 'YES', 'A', 'CREW'),
+('482993', 'Mrs', 'LI', 'WEI', '1995-07-23', 'F', 'US', 'No', 42, 'NO', 'B', 'CREW'),
+('482994', 'Mr', 'JOHN', 'SMITH', '1988-10-02', 'M', 'IND', 'No', 43, 'NO', 'B', 'CREW'),
+('482995', 'Mrs', 'NANCY', 'JOHNSON', '1970-12-30', 'F', 'UK', 'No', 44, 'NO', 'B', 'CREW'),
+('482996', 'Mr', 'PETER', 'BROWN', '1983-08-19', 'M', 'UK', 'Yes', 45, 'YES', 'A', 'CREW'),
+('482997', 'Mrs', 'ISABELLA', 'RODRIGUEZ', '1997-05-06', 'F', 'PAK', 'Yes', 46, 'YES', 'C', 'CREW');
+
+-- --------------------------------------------------------
+UPDATE guest_crew_info SET Title = 'Mr' WHERE gender = 'M';
+ 
+UPDATE guest_crew_info SET Title = 'Mrs' WHERE gender = 'F';
+
+-- =================[2]===========department_info=================
+
+INSERT INTO `department_info` (`DEPT_ID`, `DEPARTMENT`) VALUES
+(100, 'REST. SERVICE'),
+(101, 'HOUSEKEEPING'),
+(102, 'ENGINEERING'),
+(103, 'ENTERTAINMENT'),
+(104, 'SECURITY'),
+(105, 'GALLEY'),
+(106, 'MAINTENANCE'),
+(107, 'MEDICAL'),
+(108, 'IT'),
+(109, 'RECEPTION'),
+(110, 'YOUTH PROGRAMS'),
+(111, 'ENGINE');
+
+
+-- ================[3]==============ship_info===========================
+INSERT INTO `SHIP_INFO` (`SHIP_ID`, `SHIP_NAME`) 
+VALUES 
+('CH', 'Carnival Horizon'),
+('CV', 'Carnival Vista'),
+('CP', 'Carnival Panorama'),
+('CMG', 'Carnival Mardi Gras'),
+('CR', 'Carnival Radiance');
+
+-- ===============[4]==============position_info=====================
+
+INSERT INTO `position_info` (`POSITION_ID`, `POSITION`, `DEPARTMENT_ID`) VALUES
+(200, 'BONSAI MANAGER', 100),
+(201, 'ROOM ATTENDANT', 101),
+(202, 'TECHNICIAN', 102),
+(203, 'PERFORMER', 103),
+(204, 'SECURITY OFFICER', 104),
+(205, 'CHEF', 105),
+(206, 'SUPERVISOR', 106),
+(207, 'NURSE', 107),
+(208, 'IT MANAGER', 108),
+(209, 'RECEPTIONIST', 109),
+(210, 'SOUS CHEF', 105),
+(211, 'HOUSEKEEPING EX - 70', 101),
+(212, 'DECK CCL MANAGER EX - 84', 106),
+(213, 'CRUISE STAFF EX - 70', 103),
+(214, 'ENGINE MGMT GFI EX - 84 CH.ENG', 102);
+
+-- =============[5]=================voyage_info=========================
+
+INSERT INTO voyage_info (voyage_number, ship_id, voyage_start_date, voyage_end_date, is_voyage_active, port_name)
+VALUES
+    ('CH20231111008', 'CH', '2024-06-25', '2024-06-28', 'Yes', 'Port City'),
+    ('CMG20231010003', 'CMG', '2024-06-10', '2024-06-30', 'Yes', 'Harbor CIty'),
+    ('CMG20231111008', 'CMG', '2024-08-15', '2024-08-25', 'No', 'Ocean Port'),
+    ('CP20231111008', 'CP', '2024-09-03', '2024-09-12', 'Yes', 'Island Port'),
+    ('CR20231010005', 'CR', '2024-07-09', '2024-07-25', 'No', 'Harbor City'),
+    ('CR20231111008', 'CR', '2024-10-21', '2024-10-30', 'Yes', 'Harbor City'),
+    ('CV20231111008', 'CV', '2024-06-27', '2024-06-30', 'No', 'Seaside Port');
+
+
+-- =============[6]==============guest_info======================
+
+INSERT INTO guest_info (PERSON_ID, IS_ACTIVE, RESERVATION_NUMBER, SEQUENCE_NO, EMBARK_DATE, DBARK_DATE, VOYAGE_NUMBER)
+VALUES 
+('J7BH4400001', 'yes', 'J7BH44', 1, '2024-06-16', '2024-06-20', 'CR20231111008'),
+('J7BH4400002', 'N0', 'J7BH44', 2, '2024-06-16', '2024-06-20', 'CR20231111008'),
+('V1F7B100001', 'Yes', 'V1F7B1', 1, '2023-06-16', '2023-06-20', 'CH20231111008'),
+('V1F7B100002', 'No', 'V1F7B1', 2, '2023-06-16', '2023-06-20', 'CH20231111008'),
+('V2N2B300001', 'Yes', 'V2N2B3', 1, '2024-06-16', '2024-06-24', 'CMG20231111008'),
+('V2N2B300002', 'No', 'V2N2B3', 1, '2024-06-16', '2024-06-24', 'CMG20231111008'),
+('K3SZ4200001', 'Yes', 'K3SZ42', 1, '2024-06-20', '2024-06-24', 'CP20231111008'),
+('K3SZ4200002', 'No', 'K3SZ42', 2, '2024-06-20', '2024-06-24', 'CP20231111008'),
+('V1G3N400001', 'Yes', 'V1G3N4', 1, '2024-07-20', '2024-07-24', 'CP20231111008'),
+('V1G3N400002', 'No', 'V1G3N4', 2, '2024-07-20', '2024-07-24', 'CP20231111008');
+
+
+
+-- =============[7]====================crew_info=========================
+
+INSERT INTO `crew_info` (`PERSON_ID`, `SAFETY_NO`, `SIGN_ON_DATE`, `SIGN_OFF_DATE`, `DEPT_ID`, `POSITION_ID`, `SHIP_ID`) 
+VALUES 
+('482988', '37', '2023-09-09', '2024-03-01', '100', '200', 'CH'),
+('482989', '38', '2023-09-09', '2024-03-01', '101', '201', 'CH'),
+('482990', '39', '2024-06-01', '2024-12-01', '102', '202', 'CMG'),
+('482991', '40', '2024-06-01', '2024-12-01', '103', '203', 'CMG'),
+('482992', '41', '2024-05-01', '2024-11-01', '104', '204', 'CP'),
+('482993', '42', '2024-05-01', '2024-11-01', '105', '205', 'CP'),
+('482994', '43', '2024-07-01', '2025-01-01', '106', '206', 'CR'),
+('482995', '44', '2024-07-01', '2025-01-01', '107', '207', 'CR'),
+('482996', '45', '2024-08-01', '2025-02-01', '108', '208', 'CV'),
+('482997', '46', '2024-08-01', '2025-02-01', '101', '206', 'CV');
+
+-- ==============[8]=================ship_department_connection================
+
+INSERT INTO `cruisedomaindb`.`ship_department_connection` (`ID`, `DEPT_ID`, `SHIP_ID`) 
+VALUES 
+('1', '100', 'CH'),
+('2', '101', 'CH'),
+('3', '101', 'CV'),
+('4', '102', 'CMG'),
+('5', '103', 'CMG'),
+('6', '104', 'CP'),
+('7', '105', 'CP'),
+('8', '106', 'CR'),
+('9', '107', 'CR'),
+('10', '108', 'CV');
+
+
+-- in the crew_info table there should be no departmentID and shipID columns but instead it should have this tables IDs column in it
+
+-- -------------------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------------------
+
+
+-- --------<><><><><><><><><><><><><><><<><--------Event Schedulers for proper data validation----------><><><><><><<><><><><><><><><>-------------
+
+
+
+-- ============================ check and update the active status of guests based on their embarks and debark date======================
+DELIMITER $$
+CREATE EVENT if not exists update_is_active_status_for_guest
+ON SCHEDULE EVERY 1 minute
+COMMENT 'Update IS_ACTIVE based on date range'
+DO BEGIN
+UPDATE guest_info SET IS_ACTIVE = CASE
+    WHEN CURDATE() BETWEEN EMBARK_DATE AND DBARK_DATE THEN 'Yes'
+    ELSE 'No'
+END
+where EMBARK_DATE>=curdate() and EMBARK_DATE<=DBARK_DATE;
+END $$
+DELIMITER ;    
+      
+
+-- ============================check and update active status of ships voyage based on it's start and end date ===================
+
+DELIMITER $$
+CREATE EVENT if not exists update_is_active_status_for_ship
+ON SCHEDULE EVERY 1 minute
+COMMENT 'Update IS_ACTIVE based on date range'
+DO BEGIN
+UPDATE voyage_info SET is_voyage_active = CASE
+   WHEN CURDATE() BETWEEN voyage_start_date AND voyage_end_date THEN 'Yes'
+   ELSE 'No'
+END
+   WHERE voyage_start_date<=voyage_end_date;
+END $$
+DELIMITER ;
+
+
+
+-- ========================check and update if the person is onboard or not =================================
+
+
+DELIMITER $$
+CREATE EVENT if not exists update_IS_ONBOARD_status_for_GUEST_CREW_INFO
+ON SCHEDULE EVERY 1 minute
+COMMENT 'Update IS_ONBOARD based on CHECKED IN'
+DO BEGIN
+UPDATE GUEST_CREW_INFO SET IS_ONBOARD = 'no'
+where IS_CHECKED_IN='no';
+END $$
+DELIMITER ;
+
+
+-- -------------------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------------------
+
+
+-- --------<><><><><><><><><><><><><><><<><--------Triggers----------><><><><><><<><><><><><><><><>-------------
+
+
+-- =====================Trigger to check age of crew must be greater than equal to 18 years===============
+
+DELIMITER $$
+CREATE TRIGGER check_age_before_insert
+BEFORE INSERT ON `sko_trainee`.`guest_crew_info`
+FOR EACH ROW
+BEGIN
+  IF NEW.GUEST_OR_CREW = 'CREW' AND TIMESTAMPDIFF(YEAR, NEW.DOB, CURDATE()) < 18 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Crew member must be at least 18 years old.';
+  END IF;
+END$$
+
+-- ====================================================================
+
+CREATE TRIGGER check_age_before_update
+BEFORE UPDATE ON `sko_trainee`.`guest_crew_info`
+FOR EACH ROW
+BEGIN
+  IF NEW.GUEST_OR_CREW = 'CREW' AND TIMESTAMPDIFF(YEAR, NEW.DOB, CURDATE()) < 18 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Crew member must be at least 18 years old.';
+  END IF;
+END$$
+
+DELIMITER ;
+
+
+
+-- -------------------------------------------------------------------------------------------------------------
+-- -------------------------------------------------------------------------------------------------------------
+
+
+-- --------<><><><><><><><><><><><><><><<><--------Log Activities----------><><><><><><<><><><><><><><><>-------------
+
+
+
+-- ============================= Table for the activities====================
+
+CREATE TABLE GUEST_INFO_ACTIVITY
+(
+   PERSON_ID VARCHAR(45),
+   IS_ACTIVE VARCHAR(45),
+   RESERVATION_NUMBER VARCHAR(45),
+   SEQUENCE_NO INT,
+   EMBARK_DATE DATE,
+   DBARK_DATE DATE,  
+   VOYAGE_NUMBER VARCHAR(45),
+
+   NEW_PERSON_ID VARCHAR(45),
+   NEW_IS_ACTIVE VARCHAR(45),
+   NEW_RESERVATION_NUMBER VARCHAR(45),
+   NEW_SEQUENCE_NO INT,
+   NEW_EMBARK_DATE DATE,
+   NEW_DBARK_DATE DATE,  
+   NEW_VOYAGE_NUMBER VARCHAR(45),
+
+   ACTION VARCHAR(20),
+   USER_NAME VARCHAR(40),
+   CHANGE_DATE DATETIME
+);
+
+DELIMITER //
+
+
+-- ============================= Trigger for inserting activity into the table before delete operation =============== 
+
+CREATE TRIGGER DELETE_GUEST_INFO
+BEFORE DELETE ON GUEST_INFO
+FOR EACH ROW
+BEGIN
+  INSERT INTO GUEST_INFO_ACTIVITY
+  (
+    PERSON_ID,
+    IS_ACTIVE,
+    RESERVATION_NUMBER,
+    SEQUENCE_NO,
+    EMBARK_DATE,
+    DBARK_DATE,
+    VOYAGE_NUMBER,
+
+    NEW_PERSON_ID,
+    NEW_IS_ACTIVE,
+    NEW_RESERVATION_NUMBER,
+    NEW_SEQUENCE_NO,
+    NEW_EMBARK_DATE,
+    NEW_DBARK_DATE,
+    NEW_VOYAGE_NUMBER,
+
+    ACTION,
+    USER_NAME,
+    CHANGE_DATE
+  ) VALUES
+  (
+    OLD.PERSON_ID,
+    OLD.IS_ACTIVE,
+    OLD.RESERVATION_NUMBER,
+    OLD.SEQUENCE_NO,
+    OLD.EMBARK_DATE,
+    OLD.DBARK_DATE,
+    OLD.VOYAGE_NUMBER,
+
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+
+    'DELETED',
+    USER(),
+    NOW()
+  );
+END//
+
+DELIMITER ;
+
+
+-- ============================= Trigger for inserting activity into the table before Update operation =============== 
+
+
+DELIMITER //
+
+CREATE TRIGGER UPDATE_GUEST_INFO
+BEFORE UPDATE ON GUEST_INFO
+FOR EACH ROW
+BEGIN
+  INSERT INTO GUEST_INFO_ACTIVITY (
+    PERSON_ID,
+    IS_ACTIVE,
+    RESERVATION_NUMBER,
+    SEQUENCE_NO,
+    EMBARK_DATE,
+    DBARK_DATE,
+    VOYAGE_NUMBER,
+
+    NEW_PERSON_ID,
+    NEW_IS_ACTIVE,
+    NEW_RESERVATION_NUMBER,
+    NEW_SEQUENCE_NO,
+    NEW_EMBARK_DATE,
+    NEW_DBARK_DATE,
+    NEW_VOYAGE_NUMBER,
+
+    ACTION,
+    USER_NAME,
+    CHANGE_DATE
+  ) VALUES (
+    OLD.PERSON_ID,
+    OLD.IS_ACTIVE,
+    OLD.RESERVATION_NUMBER,
+    OLD.SEQUENCE_NO,
+    OLD.EMBARK_DATE,
+    OLD.DBARK_DATE,
+    OLD.VOYAGE_NUMBER,
+
+    NEW.PERSON_ID,
+    NEW.IS_ACTIVE,
+    NEW.RESERVATION_NUMBER,
+    NEW_SEQUENCE_NO,
+    NEW_EMBARK_DATE,
+    NEW_DBARK_DATE,
+    NEW.VOYAGE_NUMBER,
+
+    'UPDATED',
+    USER(),
+    NOW()
+  );
+END//
+
+DELIMITER ;
+
+-- ------+++++++++++++++-----------Activities table for department_info table ------+++++++++++++------------ 
+
+DELIMITER //
+CREATE TABLE DEPARTMENT_INFO_ACTIVITY
+(
+   DEPT_ID  INT NOT NULL,
+   DEPARTMENT VARCHAR(45) NOT NULL,
+   
+   NEW_DEPT_ID INT ,
+   NEW_DEPARTMENT VARCHAR(45),
+   
+    ACTION VARCHAR(20),
+   USER_NAME VARCHAR(40),
+   CHANGE_DATE DATETIME
+);
+
+
+-- ============================= Trigger for inserting activity into the table before delete operation =============== 
+
+CREATE TRIGGER DELETE_DEPARTMENT_INFO
+BEFORE DELETE ON DEPARTMENT_INFO
+FOR EACH ROW
+BEGIN
+  INSERT INTO DEPARTMENT_INFO_ACTIVITY (
+    DEPT_ID,
+    DEPARTMENT,
+    NEW_DEPT_ID,
+    NEW_DEPARTMENT,
+    ACTION,
+    USER_NAME,
+    CHANGE_DATE
+  ) VALUES (
+    OLD.DEPT_ID,
+    OLD.DEPARTMENT,
+    NULL,
+    NULL,
+    'DELETED',
+    USER(),
+    NOW()
+  );
+END//
+
+DELIMITER ;
+
+-- ============================= Trigger for inserting activity into the table before update operation =============== 
+
+DELIMITER //
+
+CREATE TRIGGER UPDATE_DEPARTMENT_INFO
+BEFORE UPDATE ON DEPARTMENT_INFO
+FOR EACH ROW
+BEGIN
+  INSERT INTO DEPARTMENT_INFO_ACTIVITY (
+    DEPT_ID,
+    DEPARTMENT,
+    NEW_DEPT_ID,
+    NEW_DEPARTMENT,
+    ACTION,
+    USER_NAME,
+    CHANGE_DATE
+  ) VALUES (
+    OLD.DEPT_ID,
+    OLD.DEPARTMENT,
+    NEW.DEPT_ID,
+    NEW.DEPARTMENT,
+    'UPDATED',
+    USER(),
+    NOW()
+  );
+END//
+
+DELIMITER ;
+
+--  ------+++++++++++++------------ Activities table for position_innfo table ------+++++++++++++------------ 
+CREATE TABLE POSITION_INFO_ACTIVITY (
+   POSITION_ID INT NOT NULL,
+   POSITION VARCHAR(45) NOT NULL,
+   DEPARTMENT_ID INT NOT NULL,
+   
+   NEW_POSITION_ID INT,
+   NEW_POSITION VARCHAR(45),
+   NEW_DEPARTMENT_ID INT,
+   
+   ACTION VARCHAR(20),
+    USER_NAME VARCHAR(40),
+   CHANGE_DATE DATETIME
+);
+
+
+DELIMITER //
+
+-- ============================= Trigger for inserting activity into the table before update operation =============== 
+
+CREATE TRIGGER UPDATE_POSITION_INFO
+BEFORE UPDATE ON POSITION_INFO
+FOR EACH ROW
+BEGIN
+  INSERT INTO POSITION_INFO_ACTIVITY (
+    POSITION_ID,
+    POSITION,
+    DEPARTMENT_ID,
+    NEW_POSITION_ID,
+    NEW_POSITION,
+    NEW_DEPARTMENT_ID,
+    ACTION,
+    USER_NAME,
+    CHANGE_DATE
+  ) VALUES (
+    OLD.POSITION_ID,
+    OLD.POSITION,
+    OLD.DEPARTMENT_ID,
+    NEW.POSITION_ID,
+    NEW.POSITION,
+    NEW.DEPARTMENT_ID,
+    'UPDATED',
+    USER(),
+    NOW()
+  );
+END//
+
+DELIMITER ;
+
+
+DELIMITER //
+
+-- ============================= Trigger for inserting activity into the table before delete operation =============== 
+
+CREATE TRIGGER DELETE_POSITION_INFO
+BEFORE DELETE ON POSITION_INFO
+FOR EACH ROW
+BEGIN
+  INSERT INTO POSITION_INFO_ACTIVITY (
+    POSITION_ID,
+    POSITION,
+    DEPARTMENT_ID,
+    NEW_POSITION_ID,
+    NEW_POSITION,
+    NEW_DEPARTMENT_ID,
+    ACTION,
+    USER_NAME,
+    CHANGE_DATE
+  ) VALUES (
+    OLD.POSITION_ID,
+    OLD.POSITION,
+    OLD.DEPARTMENT_ID,
+    NULL,
+    NULL,
+    NULL,
+    'DELETED',
+    USER(),
+    NOW()
+  );
+END//
+
+DELIMITER ;
+
+-- ------+++++++++++++------------ Activities table for ship_dept_connection ------+++++++++++++------------ 
+CREATE TABLE SHIP_DEPARTMENT_CONNECTION_ACTIVITY (
+   ID INT NOT NULL,
+   DEPT_ID INT NOT NULL,
+   SHIP_ID VARCHAR(45) NOT NULL,
+
+   NEW_ID INT,
+   NEW_DEPT_ID INT,
+   NEW_SHIP_ID VARCHAR(45),
+
+   ACTION VARCHAR(20),
+   USER_NAME VARCHAR(40),
+   CHANGE_DATE DATETIME
+);
+
+DELIMITER //
+
+-- ============================= Trigger for inserting activity into the table before update operation =============== 
+
+CREATE TRIGGER UPDATE_SHIP_DEPARTMENT_CONNECTION
+BEFORE UPDATE ON SHIP_DEPARTMENT_CONNECTION
+FOR EACH ROW
+BEGIN
+  INSERT INTO SHIP_DEPARTMENT_CONNECTION_ACTIVITY (
+    ID,
+    DEPT_ID,
+    SHIP_ID,
+    NEW_ID,
+    NEW_DEPT_ID,
+    NEW_SHIP_ID,
+    ACTION,
+    USER_NAME,
+    CHANGE_DATE
+  ) VALUES (
+    OLD.ID,
+    OLD.DEPT_ID,
+    OLD.SHIP_ID,
+    NEW.ID,
+    NEW.DEPT_ID,
+    NEW.SHIP_ID,
+    'UPDATED',
+    USER(),
+    NOW()
+  );
+END//
+
+DELIMITER ;
+
+DELIMITER //
+
+-- ============================= Trigger for inserting activity into the table before delete operation =============== 
+
+CREATE TRIGGER DELETE_SHIP_DEPARTMENT_CONNECTION
+BEFORE DELETE ON SHIP_DEPARTMENT_CONNECTION
+FOR EACH ROW
+BEGIN
+  INSERT INTO SHIP_DEPARTMENT_CONNECTION_ACTIVITY (
+    ID,
+    DEPT_ID,
+    SHIP_ID,
+    NEW_ID,
+    NEW_DEPT_ID,
+    NEW_SHIP_ID,
+    ACTION,
+    USER_NAME,
+    CHANGE_DATE
+  ) VALUES (
+    OLD.ID,
+    OLD.DEPT_ID,
+    OLD.SHIP_ID,
+    NULL,
+    NULL,
+    NULL,
+    'DELETED',
+    USER(),
+    NOW()
+  );
+END//
+
+DELIMITER ;
+
+-- ------+++++++++++++------------ activities table  ------+++++++++++++------------ 
+CREATE TABLE SHIP_INFO_ACTIVITY (
+   SHIP_ID VARCHAR(45) NOT NULL,
+   SHIP_NAME VARCHAR(45) NOT NULL,
+
+   NEW_SHIP_ID VARCHAR(45),
+   NEW_SHIP_NAME VARCHAR(45),
+
+   ACTION VARCHAR(20),
+   USER_NAME VARCHAR(40),
+   CHANGE_DATE DATETIME
+);
+
+DELIMITER //
+
+-- ============================= Trigger for inserting activity into the table before Update operation =============== 
+
+CREATE TRIGGER UPDATE_SHIP_INFO
+BEFORE UPDATE ON SHIP_INFO
+FOR EACH ROW
+BEGIN
+  INSERT INTO SHIP_INFO_ACTIVITY (
+    SHIP_ID,
+    SHIP_NAME,
+    NEW_SHIP_ID,
+    NEW_SHIP_NAME,
+    ACTION,
+    USER_NAME,
+    CHANGE_DATE
+  ) VALUES (
+    OLD.SHIP_ID,
+    OLD.SHIP_NAME,
+    NEW.SHIP_ID,
+    NEW.SHIP_NAME,
+    'UPDATED',
+    USER(),
+    NOW()
+  );
+END//
+
+DELIMITER ;
+
+-- ============================= Trigger for inserting activity into the table before delete operation =============== 
+
+DELIMITER //
+
+CREATE TRIGGER DELETE_SHIP_INFO
+BEFORE DELETE ON SHIP_INFO
+FOR EACH ROW
+BEGIN
+  INSERT INTO SHIP_INFO_ACTIVITY (
+    SHIP_ID,
+    SHIP_NAME,
+    NEW_SHIP_ID,
+    NEW_SHIP_NAME,
+    ACTION,
+    USER_NAME,
+    CHANGE_DATE
+  ) VALUES (
+    OLD.SHIP_ID,
+    OLD.SHIP_NAME,
+    NULL,
+    NULL,
+    'DELETED',
+    USER(),
+    NOW()
+  );
+END//
+
+DELIMITER ;
+
+
+--  ------+++++++++++++------------ activities table  ------+++++++++++++------------
+
+CREATE TABLE voyage_info_activity (
+   VOYAGE_NUMBER VARCHAR(45) NOT NULL,
+   SHIP_ID VARCHAR(45) NULL,
+   voyage_start_date DATE,
+   voyage_end_date DATE,
+   is_voyage_active VARCHAR(5),
+   port_name VARCHAR(100),
+   NEW_VOYAGE_NUMBER VARCHAR(45),
+   NEW_SHIP_ID VARCHAR(45),
+   NEW_voyage_start_date DATE,
+   NEW_voyage_end_date DATE,
+   NEW_is_voyage_active VARCHAR(5),
+   NEW_port_name VARCHAR(100),
+   ACTION VARCHAR(20),
+    USER_NAME VARCHAR(40),
+   CHANGE_DATE DATETIME
+);
+
+DELIMITER //
+
+-- ============================= Trigger for inserting activity into the table before Update operation =============== 
+CREATE TRIGGER UPDATE_voyage_info
+BEFORE UPDATE ON voyage_info
+FOR EACH ROW
+BEGIN
+  INSERT INTO voyage_info_activity (
+    VOYAGE_NUMBER,
+    SHIP_ID,
+    voyage_start_date,
+    voyage_end_date,
+    is_voyage_active,
+    port_name,
+    NEW_VOYAGE_NUMBER,
+    NEW_SHIP_ID,
+    NEW_voyage_start_date,
+    NEW_voyage_end_date,
+    NEW_is_voyage_active,
+    NEW_port_name,
+    ACTION,
+    USER_NAME,
+    CHANGE_DATE
+  ) VALUES (
+    OLD.VOYAGE_NUMBER,
+    OLD.SHIP_ID,
+    OLD.voyage_start_date,
+    OLD.voyage_end_date,
+    OLD.is_voyage_active,
+    OLD.port_name,
+    NEW.VOYAGE_NUMBER,
+    NEW.SHIP_ID,
+    NEW.voyage_start_date,
+    NEW.voyage_end_date,
+    NEW.is_voyage_active,
+    NEW.port_name,
+    'UPDATED',
+    USER(),
+    NOW()
+  );
+END//
+
+DELIMITER ;
+
+-- ============================= Trigger for inserting activity into the table before delete operation =============== 
+
+DELIMITER //
+
+CREATE TRIGGER DELETE_voyage_info
+BEFORE DELETE ON voyage_info
+FOR EACH ROW
+BEGIN
+  INSERT INTO voyage_info_activity (
+    VOYAGE_NUMBER,
+    SHIP_ID,
+    voyage_start_date,
+    voyage_end_date,
+    is_voyage_active,
+    port_name,
+    NEW_VOYAGE_NUMBER,
+    NEW_SHIP_ID,
+    NEW_voyage_start_date,
+    NEW_voyage_end_date,
+    NEW_is_voyage_active,
+    NEW_port_name,
+    ACTION,
+    USER_NAME,
+    CHANGE_DATE
+  ) VALUES (
+    OLD.VOYAGE_NUMBER,
+    OLD.SHIP_ID,
+    OLD.voyage_start_date,
+    OLD.voyage_end_date,
+    OLD.is_voyage_active,
+    OLD.port_name,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    'DELETED',
+    USER(),
+    NOW()
+  );
+END//
+
+DELIMITER ;
+
+
+
+-- ------------------------------------------------------------------------------------------------------
+-- ------------------------------------------------------------------------------------------------------
+
+
+-- --------<><><><><><><><><><><><><><><<><--------creating backup of the tables----------><><><><><><<><><><><><><><><>-------------
+
+
+
+
+CREATE TABLE cruisedomaindb.bkp_guest_crew_info AS 
+SELECT * FROM sko_trainee.guest_crew_info;
+
+CREATE TABLE cruisedomaindb.bkp_guest_info AS
+SELECT * FROM sko_trainee.guest_info;
+
+CREATE TABLE cruisedomaindb.bkp_crew_info AS
+SELECT * FROM sko_trainee.crew_info;
+
+CREATE TABLE cruisedomaindb.bkp_department_info AS
+SELECT * FROM sko_trainee.department_info;
+
+CREATE TABLE cruisedomaindb.bkp_position_info AS
+SELECT * FROM sko_trainee.position_info;
+
+CREATE TABLE cruisedomaindb.bkp_ship_info AS
+SELECT * FROM sko_trainee.ship_info;
+
+CREATE TABLE cruisedomaindb.bkp_voyage_info AS
+SELECT * FROM sko_trainee.voyage_info;
+
+CREATE TABLE cruisedomaindb.bkp_ship_department_connection AS
+SELECT * FROM sko_trainee.ship_department_connection;
+
+
+
+-- --------<><><><><><><><><><><><><><><<><--------Stored procedures ----------><><><><><><<><><><><><><><><>-------------
+
+
+-- ===========================For knowing number of crew==========================================
+delimiter //
+CREATE  PROCEDURE `crew_count`()
+begin
+select count(*) "no of crew"from guest_crew_info where guest_or_crew='crew';
+end//
+delimiter ;
+
+--  ===========================finding guest who are active ===========================
+
+delimiter // 
+CREATE PROCEDURE  `GUEST_CHECKED_IN`()
+BEGIN
+select * from guest_crew_info where 
+guest_or_crew='guest' and IS_CHECKED_IN='Yes';
+END//
+ delimiter ;
+ 
+--  ===========================count of checkin guest ===========================
+ delimiter //
+CREATE  PROCEDURE  `GUEST_CHECKED_IN_COUNT`()
+BEGIN
+select count(*) "GUEST_CHECKED_IN_COUNT" from guest_crew_info where 
+guest_or_crew='guest' and IS_CHECKED_IN='Yes';
+END//
+delimiter ;
+-- =======================================================
+delimiter // 
+CREATE PROCEDURE  `guest_count`()
+BEGIN 
+    SELECT COUNT(*) "no of guest"
+    FROM guest_crew_info
+    WHERE guest_or_crew = 'guest';
+END//
+delimiter ;
+
+--  =========================== ===========================
+ delimiter //
+CREATE PROCEDURE  `non_onboarded_crew`()
+BEGIN
+select * from guest_crew_info where 
+guest_or_crew='crew' and IS_ONBOARD='No';
+END//
+delimiter ;
+
+--  =========================== ===========================
+
+delimiter // 
+CREATE PROCEDURE  `non_onboarded_guest`()
+BEGIN
+select * from guest_crew_info where 
+guest_or_crew='guest' and IS_ONBOARD='No';
+END//
+delimiter ;
+ 
+
+--  =========================== ===========================
+ delimiter //
+CREATE PROCEDURE `onboarded_crew`()
+BEGIN
+select * from guest_crew_info where 
+guest_or_crew='crew' and IS_ONBOARD='Yes';
+END//
+delimiter ;
+ --  =========================== ===========================
+ delimiter //
+CREATE  PROCEDURE  `onboarded_crew_count`()
+BEGIN
+select count(*) "onboarded_crew_no" from guest_crew_info where 
+guest_or_crew='crew' and IS_ONBOARD='Yes';
+END//
+delimiter ;
+ --  =========================== ===========================
+ delimiter //
+CREATE  PROCEDURE `onboarded_guest`()
+BEGIN
+select * from guest_crew_info where 
+guest_or_crew='guest' and IS_ONBOARD='Yes';
+END//
+delimiter ;
+ --  =========================== ===========================
+ delimiter //
+CREATE  PROCEDURE `onboarded_guest_count`()
+BEGIN
+select count(*) "onboarded_guest_no" from guest_crew_info where 
+guest_or_crew='guest' and IS_ONBOARD='Yes';
+END//
+delimiter ;
+
+
+-- ------------------------------------------------------------------------------------
+-- ------------------------------------------------------------------------------------
+
+
+
+
+
+

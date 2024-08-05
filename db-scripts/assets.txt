@@ -1,0 +1,77 @@
+---------------<><><><><><><><><><><><><><><<><-------Table names and columns-----------><><><><><><<><><><><><><><><>-------------
+
+ -- =============guest_crew_info================
+
+PERSON_ID (VARCHAR(45))
+TITLE (ENUM)
+FIRST_NAME (VARCHAR(45))
+LAST_NAME (VARCHAR(45))
+DOB (DATE)
+GENDER (ENUM('M', 'F', 'T'))
+NATIONALITY (VARCHAR(45))
+IS_ONBOARD (ENUM('YES', 'NO'))
+CABIN_NO (INT)
+IS_CHECKED_IN (ENUM('YES', 'NO'))
+CHECKEDIN_TERMINAL (ENUM)
+GUEST_OR_CREW (ENUM)
+PROFILE_IMAGE (MEDIUMTEXT)
+
+-- ============= guest_info  =================
+
+PERSON_ID (VARCHAR(45))
+IS_ACTIVE (VARCHAR(45))
+RESERVATION_NUMBER (VARCHAR(45))
+SEQUENCE_NO (INT)
+EMBARK_DATE (DATE)
+DEBARK_DATE (DATE)
+VOYAGE_NUMBER (VARCHAR(45))
+
+-- =============crew_info =============
+
+PERSON_ID (VARCHAR(45))
+SAFETY_NO (INT)
+SIGN_ON_DATE (DATE)
+SIGN_OFF_DATE (DATE)
+DEPT_ID (INT)
+POSITION_ID (INT)
+SHIP_ID (VARCHAR(5))
+
+
+-- ============= position_info =============
+
+POSITION_ID (INT)
+POSITION (VARCHAR(45))
+DEPARTMENT_ID (INT)
+
+-- ============= department_info =============
+
+DEPT_ID (INT)
+DEPARTMENT (VARCHAR(45))
+
+
+-- ============= voyage_info =============
+
+VOYAGE_NUMBER (VARCHAR(45))
+SHIP_ID (VARCHAR(45))
+VOYAGE_START_DATE (DATE)
+VOYAGE_END_DATE (DATE)
+IS_VOYAGE_ACTIVE (VARCHAR(5))
+PORT_NAME (VARCHAR(20))
+
+-- ============= ship_info =============
+
+SHIP_ID (VARCHAR(45))
+SHIP_NAME (VARCHAR(45))
+
+-- ============= ship_department_connection =============
+
+ID (INT)
+DEPT_ID (INT)
+SHIP_ID (VARCHAR(45))
+
+
+---------------<><><><><><><><><><><><><><><<><-------DB configuration for DB connection-----------><><><><><><<><><><><><><><><>-------------
+   url:-    3.231.99.201 
+   username:- demo
+   password:- -------ask db team for password---------
+

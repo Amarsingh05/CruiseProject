@@ -1,0 +1,58 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35004.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SKO.CruiseProject", "CruiseProject\SKO.CruiseProject.csproj", "{CE447139-35EA-485F-8926-AAA55AA3AADF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SKO.CruiseProject.Tests", "CruiseProject.Tests\SKO.CruiseProject.Tests.csproj", "{96759CF3-2126-4A5C-9531-7E6A34DD85D3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CE447139-35EA-485F-8926-AAA55AA3AADF} = {CE447139-35EA-485F-8926-AAA55AA3AADF}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SKO.CruiseProject.Models", "SKO.CruiseProject.Models\SKO.CruiseProject.Models.csproj", "{10265886-D2B6-4E9A-B7FC-C5170E4742C9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SKO.CruiseProject.Entities", "SKO.CruiseProject.Entities\SKO.CruiseProject.Entities.csproj", "{BA048E3D-FFB6-44FB-A210-46B07337425C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SKO.CruiseProject.Messages", "SKO.CruiseProject.Messages\SKO.CruiseProject.Messages.csproj", "{84CE9AD1-7789-4BA9-8B44-2BE4C1F0BA9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SKO.CruiseProject.Auth", "SKO.CruiseProject.Auth\SKO.CruiseProject.Auth.csproj", "{50F2B9FC-4025-450D-B509-5EA26D25D108}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE447139-35EA-485F-8926-AAA55AA3AADF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE447139-35EA-485F-8926-AAA55AA3AADF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE447139-35EA-485F-8926-AAA55AA3AADF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE447139-35EA-485F-8926-AAA55AA3AADF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96759CF3-2126-4A5C-9531-7E6A34DD85D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96759CF3-2126-4A5C-9531-7E6A34DD85D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96759CF3-2126-4A5C-9531-7E6A34DD85D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96759CF3-2126-4A5C-9531-7E6A34DD85D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10265886-D2B6-4E9A-B7FC-C5170E4742C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10265886-D2B6-4E9A-B7FC-C5170E4742C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10265886-D2B6-4E9A-B7FC-C5170E4742C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10265886-D2B6-4E9A-B7FC-C5170E4742C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA048E3D-FFB6-44FB-A210-46B07337425C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA048E3D-FFB6-44FB-A210-46B07337425C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA048E3D-FFB6-44FB-A210-46B07337425C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA048E3D-FFB6-44FB-A210-46B07337425C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84CE9AD1-7789-4BA9-8B44-2BE4C1F0BA9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84CE9AD1-7789-4BA9-8B44-2BE4C1F0BA9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84CE9AD1-7789-4BA9-8B44-2BE4C1F0BA9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84CE9AD1-7789-4BA9-8B44-2BE4C1F0BA9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50F2B9FC-4025-450D-B509-5EA26D25D108}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50F2B9FC-4025-450D-B509-5EA26D25D108}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50F2B9FC-4025-450D-B509-5EA26D25D108}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50F2B9FC-4025-450D-B509-5EA26D25D108}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9E6CBC18-EDEA-429B-B2F2-5FF94E23E5DE}
+	EndGlobalSection
+EndGlobal

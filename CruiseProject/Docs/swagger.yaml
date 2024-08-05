@@ -1,0 +1,42 @@
+﻿        paths:
+          /api/GetCrews/{departmentName}:
+            get:
+              summary: Retrieves the crew information for a specified department.
+              parameters:
+                - name: departmentName
+                  in: path
+                  required: true
+                  description: The name of the department for which to retrieve crew information.
+                  schema:
+                    type: string
+              responses:
+                "200":
+                  description: Returns the list of crew information.
+                  content:
+                    application/json:
+                      schema:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/CrewInfo'
+                "400":
+                  description: If the department name is null or empty.
+                  content:
+                    text/plain:
+                      schema:
+                        type: string
+                        example: Department Name cannot be null or empty.
+                "404":
+                  description: If no crew information is found for the specified department.
+        components:
+          schemas:
+            CrewInfo:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                department:
+                  type: string
+                position:
+                  type: string
